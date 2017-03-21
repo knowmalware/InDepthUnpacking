@@ -1,5 +1,7 @@
 [Albertini2010] Albertini, Ange; 05 April 2010; https://corkami.googlecode.com/files/packers.pdf; accessed Oct 2015
 
+[Apvrille2014] Axelle Apvrille, Ruchna Nigam; "Obfuscation in android malware, and how to fight back"; 02 July 2014; https://www.virusbulletin.com/virusbulletin/2014/07/obfuscation-android-malware-and-how-fight-back; accessed March 2017
+
 [Bhat2015] Bhat, Raashid; "A Guide to Malware Binary Reconstruction";14 Sep 2015; http://int0xcc.svbtle.com/a-guide-to-malware-binary-reconstruction
 
 [Farley2015] Farley, Ryan J.; 24 April 2015; "Toward Automated Forensic Analysis of Obfuscated Malware"
