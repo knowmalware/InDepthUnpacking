@@ -8,11 +8,15 @@
 
 [Ferrie2008] Ferrie, Peter; 2008; "Anti-Unpacker Tricks"; http://pferrie.host22.com/papers/unpackers.pdf; accessed Oct 2015
 
+[Futoransky2006] Futoransky, Ariel, Emiliano Kargieman, Carlos Sarraute, and Ariel Waissbein. "Foundations and applications for secure triggers." ACM Transactions on Information and System Security (TISSEC) 9.1 (2006): 94-112.
+
 [Griffin2015] Griffin, Brendan; 17 Sep 2015; "Upatre malware adds simple anti-sandboxing mechanism"; http://blog.malcovery.com/upatre-malware-adds-simple-anti-sandboxing-mechanism
 
 [Grunzweig2015] Grunzweig, Josh; "Updated PClock Ransomware Still Comes Up Short"; 29 Sep 2015; http://researchcenter.paloaltonetworks.com/2015/09/updated-pclock-ransomware-still-comes-up-short/
 
-[Guo2008] Fanglu Guo, Peter Ferrie, and Tzi-cker Chiue; hhttp://pferrie.host22.com/papers/packerproblem.pdf
+[Guo2008] Fanglu Guo, Peter Ferrie, and Tzi-cker Chiue; http://pferrie.host22.com/papers/packerproblem.pdf
+
+[Hohl1998] Hohl, Fritz. "Time limited blackbox security: Protecting mobile agents from malicious hosts." Mobile agents and security (1998): 92-113.
 
 [Infosec2013] "Anti-Memory Dumping Techniques"; 19 Mar 2013; http://resources.infosecinstitute.com/anti-memory-dumping-techniques/
 
