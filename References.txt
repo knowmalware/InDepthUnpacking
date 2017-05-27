@@ -4,6 +4,8 @@
 
 [Bhat2015] Bhat, Raashid; "A Guide to Malware Binary Reconstruction";14 Sep 2015; http://int0xcc.svbtle.com/a-guide-to-malware-binary-reconstruction
 
+[Chishkala2016] Chishkala, Igor; "Understanding Obfuscated Code & How to Deobfuscate PHP and JavaScript"; 08 Jun 2016; https://www.upwork.com/hiring/development/understanding-obfuscated-code-deobfuscate-php-javascript/; accessed May 2017
+
 [Farley2015] Farley, Ryan J.; 24 April 2015; "Toward Automated Forensic Analysis of Obfuscated Malware"
 
 [Ferrie2008] Ferrie, Peter; 2008; "Anti-Unpacker Tricks"; http://pferrie.host22.com/papers/unpackers.pdf; accessed Oct 2015
