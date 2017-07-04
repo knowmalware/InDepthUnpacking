@@ -3,7 +3,6 @@ STC,section merging,"Merge all sections; just one entry in the sections table.  
 STC,imports compression,"Imports are stored and loaded with a more compact import table format.  Each DLL needed by the executable is mentioned in the IAT, but only one function from each/most is imported; the rest are imported ""manually"" via GetProcAddress calls.","Debug, dump (if necessary), and fix/reconstruct IAT.",Albertini2010
 STC,imports by hash,"DLL loaded and then each export name is parsed until it matches a specific hash, instead of a GetProcAddress call. Also often seen used by shellcode, as it reduces the size of each import from a human-readable string to a sequence of four bytes.","Debug, dump (if necessary), and fix/reconstruct IAT.",Albertini2010
 STC,call optimisation,Turn relative operands of jumps and calls into absolute (better compression).  May confuse some basic block detection algorithms.,,Albertini2010
-,,,,
 STC,resource(s) compression,"Compresses resources, avoiding critical ones (main icon, manifest, etc.)",Debug and dump,Albertini2010
 DBG,token check,"Presence check to allow the program to run (ex: dongle, CD/DVD, key, file, network, etc.)",Ensure item is present or patch (file or in-memory) the check to always succeed.,Albertini2010
 DBG,fingerprinting,"Token is specific to a hardware element (ex: disk, OS, CPU, NIC MAC, etc.)",Ensure item is present or patch (file or in-memory) the check to always succeed.,Albertini2010
@@ -17,7 +16,6 @@ DBG,illusion,Makes the analyst think something incorrect happened.  This is a ge
 STC,junk,Insertion of dummy code between relevant opcodes.  Can make signature writing more complex.,,Albertini2010
 STC,jumps,Insertion of jumps to make analysis visually harder.,,Albertini2010
 STC,thunks,Variation on “jump”; also used by some compilers for user-generated functions (ex: Visual Studio /INCREMENTAL),,Albertini2010
-,,,,
 STC,polymorphism,"Different but equivalent code (2 packed files of the same source are different).  Mainly affects detection and similarity metrics, which makes for more manual analysis.","Use capability detections (ex: MAEC; CylanceV) and/or function-level fuzzy matching (ex: PIC Hash).
 Use disassembler (or plugins) that allow saving function-level information and sharing/importing (ex: IDA MyNav; BinNavi)",Albertini2010
 DBG,self generation,Packer stub generates polymorphic code on the fly (same file executes differently).  This is a general category of anti-analysis and may refer to any number of techniques.,,Albertini2010
@@ -31,12 +29,10 @@ DBG,"timing, check delay","Comparing time between two points to detect “unusua
 2. Patch the comparison.","Albertini2010, Grunzweig2015"
 "DBG, SBX","timing, at least",Comparing single GetTickCount with some value to see if system has been started at least X amount ago.,"1. snapshot analysis vm after letting it run for a while (hours) first
 2. use tool/debugger that allows GetTickCount to always return a specific large number",Griffin2015
-,,,,
 "DBG, SBX","timing, date check",Calling GetSystemTime or equiv and only executing code if the current date/hour/minute/second passes some check. Often this is for running only after or only until a specific date.,Look for API calls and modify inputs or comparison.,
 DBG,"anti-debug, detect",Detect the presence of an attached debugger (ex: IsDebuggerPresent),Use a plugin that takes care of this for you.,Albertini2010
 DBG,"anti-debug, prevent",Prevent a debugger to attach to the target itself or stay attached.  This is a general category of anti-analysis and may refer to any number of techniques.,,Albertini2010
 DBG,"anti-debug, nuisance","Make debugger session difficult (BlockInput, slow down, etc.).  This is a general category of anti-analysis and may refer to any number of techniques.",,Albertini2010
-,,,,
 "DBG, SBX","anti-debug, thread","Spawn a monitoring thread to detect tampering, breakpoints, etc.",Disable the thread.,Albertini2010
 "DBG, SBX",debug artifacts,"Detects a debugger by its artifact (window title, device driver, exports, etc.)",Identify detection routine(s) and patch out or hardware breakpoint and modify register or stack values.,Albertini2010
 "STC, EMU",limitation,Prevent the use of a tool via a specific limitation.  This is a general category of anti-analysis and may refer to any number of techniques.,,Albertini2010
@@ -55,8 +51,6 @@ DBG,interrupt-based,"The unpacking code relies on use of int 1 or int 3, or it u
 "STC, DBG, DMP",byte stealing,Move the first bytes of the original code elsewhere (harder rebuilding and bypasses breakpoints),Breakpoint a few instructions into functions.,Albertini2010
 "STC, DMP",page guard,"Blocks of code are encrypted individually, and decrypted temporarily only upon execution",,Albertini2010
 STC,flow,flow opcodes are removed and emulated (or decrypted) by the packer during execution,,Albertini2010
-,,,,
-,,,,
 EMU,opcodes,"using different opcodes sets (ex: FPU, MMX, SSE) to block emulators",,Albertini2010
 EMU,undoc,use of rare or undocumented opcodes to block non-exhaustive emulators,,Albertini2010
 EMU,"anti-emulation, API",unusual APIs are called to block non-exhaustive emulators (particularly anti-virus),,Albertini2010
@@ -69,8 +63,6 @@ DBG,exception misdirection,Using exception handling (SEH) to cause flow of progr
 STC,conditional misdirection,"Conditional jumps are sometimes used to confuse disassembly engines, resulting in the wrong instruction boundaries and thus wrong mnemonic and operands; easy to “see” when jmp/jcc to a label+# (ex: JNE loc_401345fe+2)",Debug; trace until condition (ex: section hop),
 DBG,stack canary,"Similar to the anti-exploitation method of the same name, malware may try to detect mucking with values on the stack (Szor p227)",,Szor2005
 "STC, DBG, EMU",pipeline misdirection,"Taking advantage of pipelining in modern processors to misdirect debugging, emulation, or static analysis tools. An unpacker can assume a certain number of opcodes will be cached and then procede to overwrite them in memory, causing a debugger/emulator/analyzer to follow different code than is normally executed (Szor pp230-231)",,Szor2005
-,,,,
-,,,,
 DBG,BP clearing,Intentionally clearing software or hardware breakpoints.,,
 DBG,TIB-aware,Accessing thread information (fs:[20h]) for debug detection or process obfuscation.,,
 "STC, DBG, EMU",non-obvious loop escapes,Using SEH or other methods to break out of a loop instead of a conditional jump.,Breakpoint on exception handler(s),
@@ -80,7 +72,6 @@ DBG,TIB-aware,Accessing thread information (fs:[20h]) for debug detection or pro
 DBG,self-unmapping,UnmapViewOfFile() on itself,"Has to copy code and data to new/different segments, so dump those instead",Infosec2013
 "DBG, STC",stolen bytes (code splicing),First few instructions of original EP are incorporated into unpacking code.  May confuse some automated unpackers.,Replace them manually,Infosec2013
 DBG,RtlAdjustPrivilege,Calling RtlAdjustPrivilege to either prevent a debugger from attaching or to detect if a debugger is attached.,Breakpoint on RtlAdjustPrivilege,Insid3Code2015
-,,,,
 ,Entry / start,PUSHA,"1. Look for POPA
 2. Breakpoint on stack access",Szor2005
 STC,GET_BASE,"CALL to a POP; finds base of code or data, often the packed version of the code; also used often in obfuscated/packed shellcode",,Szor2005
@@ -91,25 +82,20 @@ STC,GET_APIS_WITH_CRC,same as “imports by hash”,Imports-by-hash can be a goo
 "DBG, SBX",HOOK_INTERRUPT,modification of interrupt vector or descriptor tables,,Szor2005
 "DBG, SBX",HOOK_FILE_SYSTEM,do something when particular file/dir is accessed; often through hooking certain API calls such as CreateFileA and CreateFileW,,Szor2005
 ,STEALTH,"Hiding on the system, for example by hooking NtQuerySystemInformation to hide a process name from TaskManager/tasklist",,Szor2005
-,,,,
 ,INIT_EXPLOIT,Code associated with a known vulnerability,,Szor2005
 STC,ENCODE_FILE,"Encode a file on disk, such as an implant’s config file","Debug.  Find API call that accesses file.
 Encoding function could be signatured.",Szor2005
 STC,POLY_ENGINE / META_ENGINE,"Polymorphic engine. Often makes up 50% of the “code”. Look for code that creates instructions such as NOP, MOV, XOR",,Szor2005
-,,,,
 "DBG, SBX",Stolen API Code (aka byte stealing),"First few instructions or bytes of an API are executed in user code, allowing the IAT to point into the middle of an API function. This confuses IAT rebuilders such as ImpRec and Scylla.",,Bhat2015
 "STC, DBG",Alignment,Some analysis tools cannot handle binaries with misaligned sections.,Use binary viewer that alerts on misaligned sections.  Fix manually.,Bhat2015
-,,,,
 DBG,SizeOfImage,Changinging this value during run time can prevent some debuggers from attaching. see example assembly on page 1. Also confuses some unpackers and dumpers.,Identify access to and modification of headers.,Ferrie2008
 DBG,Modify PE Header,"More general case of above, where any part of the header could be changed or even erased. Example erasure assembly on page 2.",Identify access to and modification of headers.,Ferrie2008
 "STC, DBG",nanomites,int3 with code replacement table; debugs itself; see page 2,,Ferrie2008
 ,stolen bytes,,,Ferrie2008
 "STC, DMP",guard pages,"blocks of code are encrypted individually, and decrypted temporarily only upon execution. One variant uses self-debugging to accomplish.",Modify binary to touch all pages then pause; take memory snapshot.,Ferrie2008
-,,,,
 DBG,pre-debug,Unable to coax debugger to attach to process or to break until after the code of interest has been executed,"1. patch binary, insert 0xcc
 2. if it is a DLL, change EP to point to RET and add new export that points to the code of interest
 3. use IDA or OllyDbg2",
-,,,,
 "STC, DBG",return obfuscation,Overwrite the RET address on the stack or the code at the RET address.  Variation seen that writes to the start-up code or main module that called the malware's WinMain or DllMain,"When this is used as the tail transition, any of the typical tail transition heuristics can be used, such as section hop.",
 "STC, DBG, DMP",malloc,"Instead of unpacking into a pre-defined section/segment (ex: .text) of the binary, uses malloc() / VirtualAlloc() to create a new segment. This makes keeping track of memory locations across different runs more difficult, as there is no guarantee that malloc/VirtualAlloc will assign the same address range each time.","Section hop, segment breakpoint, or trace until EIP in range",
 STC,argument obfuscation,"simple number or string arguments to API calls are calculated at runtime, making static analysis more difficult.",,
