@@ -1,7 +1,8 @@
 category,name,desc,mitigation,reference
 STC,section merging,"Merge all sections; just one entry in the sections table.  Only affects readability slightly, so may not even be worth mitigating.  May affect some detection signatures if written to be section dependent.",Manually modify with a PE editor.  Sections boundaries typically easy to identify by matching alignment (NT headers -> Optional header -> Section Alignment) and looking for large groupings of NULL bytes preceding each original section.,Albertini2010
-STC,imports compression,"Imports are stored and loaded with a more compact import table format.  Each DLL needed by the executable is mentioned in the IAT, but only one function from each/most is imported; the rest are imported ""manually"" via GetProcAddress calls.","Debug, dump (if necessary), and fix/reconstruct IAT.",Albertini2010
-STC,imports by hash,"DLL loaded and then each export name is parsed until it matches a specific hash, instead of a GetProcAddress call. Also often seen used by shellcode, as it reduces the size of each import from a human-readable string to a sequence of four bytes.","Debug, dump (if necessary), and fix/reconstruct IAT.",Albertini2010
+STC,imports compression,"Imports are stored and loaded with a more compact import table format.  Each DLL needed by the executable is mentioned in the IAT, but only one function from each/most is imported; the rest are imported ""manually"" via GetProcAddress calls.","Debug, dump (if necessary), and fix/reconstruct IAT.","Albertini2010, Szor2005"
+STC,imports by hash,"DLL loaded and then each export name is parsed until it matches a specific hash, instead of a GetProcAddress call. AKA GET_APIS_WITH_CRC. Also often seen used by shellcode, as it reduces the size of each import from a human-readable string to a sequence of four bytes.","Debug, dump (if necessary), and fix/reconstruct IAT.
+NOTE: if the hashing method or implementation is unique, it may be a good way to signature.","Albertini2010, Szor2005"
 STC,call optimisation,Turn relative operands of jumps and calls into absolute (better compression).  May confuse some basic block detection algorithms.,,Albertini2010
 STC,resource(s) compression,"Compresses resources, avoiding critical ones (main icon, manifest, etc.)",Debug and dump,Albertini2010
 DBG,token check,"Presence check to allow the program to run (ex: dongle, CD/DVD, key, file, network, etc.)",Ensure item is present or patch (file or in-memory) the check to always succeed.,Albertini2010
@@ -16,8 +17,9 @@ DBG,illusion,Makes the analyst think something incorrect happened.  This is a ge
 STC,junk,Insertion of dummy code between relevant opcodes.  Can make signature writing more complex.,,Albertini2010
 STC,jumps,Insertion of jumps to make analysis visually harder.,,Albertini2010
 STC,thunks,Variation on “jump”; also used by some compilers for user-generated functions (ex: Visual Studio /INCREMENTAL),,Albertini2010
-STC,polymorphism,"Different but equivalent code (2 packed files of the same source are different).  Mainly affects detection and similarity metrics, which makes for more manual analysis.","Use capability detections (ex: MAEC; CylanceV) and/or function-level fuzzy matching (ex: PIC Hash).
-Use disassembler (or plugins) that allow saving function-level information and sharing/importing (ex: IDA MyNav; BinNavi)",Albertini2010
+STC,polymorphism,"Different but equivalent code (2 files of the same source are different). AKA POLY_ENGINE / META_ENGINE. Mainly affects detection and similarity metrics, which makes for more manual analysis. Often makes up 50% of the “code”. ","Use capability detections (ex: MAEC; CylanceV) and/or function-level fuzzy matching (ex: PIC Hash).
+Use disassembler (or plugins) that allow saving function-level information and sharing/importing (ex: IDA MyNav; BinNavi).
+Look for code that creates instructions such as NOP, MOV, XOR.","Albertini2010, Szor2005"
 DBG,self generation,Packer stub generates polymorphic code on the fly (same file executes differently).  This is a general category of anti-analysis and may refer to any number of techniques.,,Albertini2010
 "STC, DBG",packer virtualization,Virtualizes [part of] packer stub code.  This is a general category of anti-analysis and may refer to any number of techniques.,,Albertini2010
 "STC, DBG",virtualization,Virtualizes original code; dumped code won’t work without VM code.  This is a general category of anti-analysis and may refer to any number of techniques.,,Albertini2010
@@ -36,7 +38,7 @@ DBG,"anti-debug, nuisance","Make debugger session difficult (BlockInput, slow do
 "DBG, SBX","anti-debug, thread","Spawn a monitoring thread to detect tampering, breakpoints, etc.",Disable the thread.,Albertini2010
 "DBG, SBX",debug artifacts,"Detects a debugger by its artifact (window title, device driver, exports, etc.)",Identify detection routine(s) and patch out or hardware breakpoint and modify register or stack values.,Albertini2010
 "STC, EMU",limitation,Prevent the use of a tool via a specific limitation.  This is a general category of anti-analysis and may refer to any number of techniques.,,Albertini2010
-,exploit,Prevent the use of a tool via a specific vulnerability.  This is a general category of anti-analysis and may refer to any number of techniques.,,Albertini2010
+,exploit,Prevent the use of a tool via a specific vulnerability.  This is a general category of anti-analysis and may refer to any number of techniques.,,"Albertini2010, Szor2005"
 ,backdoor,Detect or crash a tool via a specific backdoor.  This is a general category of anti-analysis and may refer to any number of techniques.,,Albertini2010
 DBG,self-debugging,Debug itself to prevent another debugger to be attached.,Force attach debugger.  Not all debuggers support this option; see OllyMigrate in this case.,Albertini2010
 DBG,interrupt hooking,Block interrupt 1 and/or 3 to prevent debuggers from working.,,Albertini2010
@@ -44,12 +46,12 @@ DBG,interrupt-based,"The unpacking code relies on use of int 1 or int 3, or it u
 "DBG, DMP",tampering,"Erase or corrupt specific file parts to prevent rebuilding (header, packer stub, etc.)",Identify which parts are corrupted; restart debug; breakpoint on modification of those blocks of memory and prevent modification.,Albertini2010
 ,"anti-dump, imports","Add obfuscation between imports calls and APIs (obfuscation, virtualization, stealing, etc.)",,Albertini2010
 "STC, DMP",on-the-fly APIs,API address is resolved before each use to prevent complete dumping,,Albertini2010
-,API hooking,Alter API behavior (ex: redirect benign API to a critical one); sometimes used for anti-dump,,Albertini2010
+"DBG, SBX, DMP",API hooking,"Alter API behavior, for example by inserting JMP/JCC instruction(s) at start of API code or to redirect benign API to a critical one. Sometimes used for anti-dump.",,"Albertini2010, Szor2005"
 "STC, DBG",static linking,Copy locally the whole content of API code,"once one function is identified, use the fact that all functions for a statically linked library are in a contiguous memory region.",
 "STC, DBG",inlining,variation of static linking where full API code inserted everywhere it would have been CALLed,,Albertini2010
 ,relocate,relocate API code in separate buffer (calls don’t lead to imported DLLs),,Albertini2010
-"STC, DBG, DMP",byte stealing,Move the first bytes of the original code elsewhere (harder rebuilding and bypasses breakpoints),Breakpoint a few instructions into functions.,Albertini2010
-"STC, DMP",page guard,"Blocks of code are encrypted individually, and decrypted temporarily only upon execution",,Albertini2010
+"STC, DBG, DMP",byte stealing,"Move or copy the first bytes / instructions of the original code elsewhere.  AKA stolen bytes or code splicing.  For example, a packer may incorporate the first few instructions of the original EntryPoint (EP) into its unpacking stub before the tail transition in order to confuse automated unpackers and novice analysts.  This can make it harder for rebuilding and may bypass breakpoints if set prematurely.",Look for tail transitions that appear to transition into the middle of well formed code.  Breakpoint a few instructions into functions.,"Albertini2010, Infosec2013, Ferrie2008"
+"STC, DBG, DMP",page guard,"Blocks of code are encrypted individually, and decrypted temporarily only upon execution. AKA guard pages. One variant uses self-debugging to accomplish.",Modify binary to touch all pages then pause; take memory snapshot.,"Albertini2010, Ferrie2008"
 STC,flow,flow opcodes are removed and emulated (or decrypted) by the packer during execution,,Albertini2010
 EMU,opcodes,"using different opcodes sets (ex: FPU, MMX, SSE) to block emulators",,Albertini2010
 EMU,undoc,use of rare or undocumented opcodes to block non-exhaustive emulators,,Albertini2010
@@ -68,39 +70,30 @@ DBG,TIB-aware,Accessing thread information (fs:[20h]) for debug detection or pro
 "STC, DBG, EMU",non-obvious loop escapes,Using SEH or other methods to break out of a loop instead of a conditional jump.,Breakpoint on exception handler(s),
 ,modify self,General class of techniques that modify the malware file(s) on disk.,Breakpoint on MapViewOfFile[Ex],Guo2008
 "DBG, SBX",prevent self-access,"""Protect"" it's own process, preventing some analysis tools from working.",Breakpoint on VirtualProtect[Ex],Guo2008
-"STC, DBG",nanomites,int3 with code replacement table,simply pass int3 to program?,Infosec2013
+"STC, DBG",nanomites,int3 with code replacement table; debugs itself; see page 2 of Ferrie2008,simply pass int3 to program?,"Infosec2013, Ferrie2008"
 DBG,self-unmapping,UnmapViewOfFile() on itself,"Has to copy code and data to new/different segments, so dump those instead",Infosec2013
-"DBG, STC",stolen bytes (code splicing),First few instructions of original EP are incorporated into unpacking code.  May confuse some automated unpackers.,Replace them manually,Infosec2013
 DBG,RtlAdjustPrivilege,Calling RtlAdjustPrivilege to either prevent a debugger from attaching or to detect if a debugger is attached.,Breakpoint on RtlAdjustPrivilege,Insid3Code2015
 ,Entry / start,PUSHA,"1. Look for POPA
 2. Breakpoint on stack access",Szor2005
 STC,GET_BASE,"CALL to a POP; finds base of code or data, often the packed version of the code; also used often in obfuscated/packed shellcode",,Szor2005
 STC,GETMODULE_HANDLE,"LoadLibrary API calls or direct access of kernel32 via PEB (fs[0]) pointers, used to rebuild IAT or just obfuscate library use",,Szor2005
-STC,GETPROC_ADDRESS,"GetProcAddress API calls or “imports by hash”, used to rebuild IAT or just obfuscate API use",,Szor2005
-STC,GET_APIS_WITH_CRC,same as “imports by hash”,Imports-by-hash can be a good way to signature if the hashing method or implementation is unique.,Szor2005
-"DBG, SBX",HOOK_API,insert JMP/JCC instruction(s) at start of API calls,,Szor2005
 "DBG, SBX",HOOK_INTERRUPT,modification of interrupt vector or descriptor tables,,Szor2005
 "DBG, SBX",HOOK_FILE_SYSTEM,do something when particular file/dir is accessed; often through hooking certain API calls such as CreateFileA and CreateFileW,,Szor2005
 ,STEALTH,"Hiding on the system, for example by hooking NtQuerySystemInformation to hide a process name from TaskManager/tasklist",,Szor2005
-,INIT_EXPLOIT,Code associated with a known vulnerability,,Szor2005
 STC,ENCODE_FILE,"Encode a file on disk, such as an implant’s config file","Debug.  Find API call that accesses file.
 Encoding function could be signatured.",Szor2005
-STC,POLY_ENGINE / META_ENGINE,"Polymorphic engine. Often makes up 50% of the “code”. Look for code that creates instructions such as NOP, MOV, XOR",,Szor2005
-"DBG, SBX",Stolen API Code (aka byte stealing),"First few instructions or bytes of an API are executed in user code, allowing the IAT to point into the middle of an API function. This confuses IAT rebuilders such as ImpRec and Scylla.",,Bhat2015
+"DBG, SBX",Stolen API Code,"A variation of “byte stealing” where the first few instructions or bytes of an API are executed in user code, allowing the IAT to point into the middle of an API function. This confuses IAT rebuilders such as ImpRec and Scylla and may bypass breakpoints.",,Bhat2015
 "STC, DBG",Alignment,Some analysis tools cannot handle binaries with misaligned sections.,Use binary viewer that alerts on misaligned sections.  Fix manually.,Bhat2015
 DBG,SizeOfImage,Changinging this value during run time can prevent some debuggers from attaching. see example assembly on page 1. Also confuses some unpackers and dumpers.,Identify access to and modification of headers.,Ferrie2008
-DBG,Modify PE Header,"More general case of above, where any part of the header could be changed or even erased. Example erasure assembly on page 2.",Identify access to and modification of headers.,Ferrie2008
-"STC, DBG",nanomites,int3 with code replacement table; debugs itself; see page 2,,Ferrie2008
-,stolen bytes,,,Ferrie2008
-"STC, DMP",guard pages,"blocks of code are encrypted individually, and decrypted temporarily only upon execution. One variant uses self-debugging to accomplish.",Modify binary to touch all pages then pause; take memory snapshot.,Ferrie2008
+DBG,Modify PE Header,"More general case of above, where any part of the header could be changed or even erased. Example erasure assembly on page 2 of Ferrie2008.",Identify access to and modification of headers.,Ferrie2008
 DBG,pre-debug,Unable to coax debugger to attach to process or to break until after the code of interest has been executed,"1. patch binary, insert 0xcc
 2. if it is a DLL, change EP to point to RET and add new export that points to the code of interest
 3. use IDA or OllyDbg2",
 "STC, DBG",return obfuscation,Overwrite the RET address on the stack or the code at the RET address.  Variation seen that writes to the start-up code or main module that called the malware's WinMain or DllMain,"When this is used as the tail transition, any of the typical tail transition heuristics can be used, such as section hop.",
 "STC, DBG, DMP",malloc,"Instead of unpacking into a pre-defined section/segment (ex: .text) of the binary, uses malloc() / VirtualAlloc() to create a new segment. This makes keeping track of memory locations across different runs more difficult, as there is no guarantee that malloc/VirtualAlloc will assign the same address range each time.","Section hop, segment breakpoint, or trace until EIP in range",
 STC,argument obfuscation,"simple number or string arguments to API calls are calculated at runtime, making static analysis more difficult.",,
-"STC",Variable Recomposition,"Variables, often strings, are broken into multiple parts and store out of order, in different memory ranges, or both.  They must then be recomposed before use.",,Holh1998
-"STC",Value-Dependent Jumps,"Explicit use of computed values for control flow, often many times in the same basic block or function.",,Holh1998
+STC,Variable Recomposition,"Variables, often strings, are broken into multiple parts and store out of order, in different memory ranges, or both.  They must then be recomposed before use.",,Holh1998
+STC,Value-Dependent Jumps,"Explicit use of computed values for control flow, often many times in the same basic block or function.",,Holh1998
 "STC,DBG,SBX,EMU",Deposited Keys,"Parts of the code and/or data is encrypted or otherwise relies on data external to the file itself.  For example, malware that contains code that is encrypted with a key that is downloaded from a server; malware that only runs if certain other software is installed on the system; or malware that reads certain attributes of the system (BIOS version string, hostname, etc) and then encrypts portions of its code or data using those attributes as input, thus preventing itself from being able to be run on a different system, such as a sandbox.",,Holh1998
-"STC,DBG,SBX,EMU",Secure Triggers,"Code and/or data is encrypted until the underlying system satisfies a preselected condition unknown to the analyst.  This is a form of Deposited Keys.",,Futoransky2006
+"STC,DBG,SBX,EMU",Secure Triggers,Code and/or data is encrypted until the underlying system satisfies a preselected condition unknown to the analyst.  This is a form of Deposited Keys.,,Futoransky2006
 "STC,DBG",Minification,"Per wikipedia, minification is 'the process of removing all unnecessary characters from source code without changing its functionality.'  A simple example is when all the unecessary whitespace and comments are removed.  This is distinguished from compression in that it neither adds to nor changes the code seen by the interpreter.  Minification is often used for malware written in interpreted languages, such as JavaScript, PHP, or Python.  Legitimate code that is transmitted many times a second, such as JavaScript on websites, often uses minification to simply reduce the number of bytes transmitted.","Mitigation, often called 'unminifying', 'prettifying', or 'beautifying' is trivial, though may require a language-specific tool (ex: JSBeautifier).",Chishkala2016
