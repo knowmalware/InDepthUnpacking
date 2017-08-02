@@ -10,6 +10,8 @@
 
 [Ferrie2008] Ferrie, Peter; 2008; "Anti-Unpacker Tricks"; http://pferrie.host22.com/papers/unpackers.pdf; accessed Oct 2015
 
+[Ferrie2011] Ferrie, Peter; 4 May 2011; "The 'Ultimate' Anti-Debugging Reference"; http://pferrie.host22.com/papers/antidebug.pdf; accessed Aug 2017
+
 [Futoransky2006] Futoransky, Ariel, Emiliano Kargieman, Carlos Sarraute, and Ariel Waissbein. "Foundations and applications for secure triggers." ACM Transactions on Information and System Security (TISSEC) 9.1 (2006): 94-112.
 
 [Griffin2015] Griffin, Brendan; 17 Sep 2015; "Upatre malware adds simple anti-sandboxing mechanism"; http://blog.malcovery.com/upatre-malware-adds-simple-anti-sandboxing-mechanism
